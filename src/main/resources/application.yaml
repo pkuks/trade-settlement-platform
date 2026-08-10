@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: trade-settlement-platform
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/settlement_db
+    username: settlement_user
+    password: settlement_password
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+    show-sql: true
+
+  flyway:
+    enabled: true
