@@ -15,7 +15,7 @@ import java.util.UUID;
 @Table(name = "users")
 @AllArgsConstructor @Getter @Setter
 @NoArgsConstructor
-public class User {
+public class User extends BaseAuditableEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -30,9 +30,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserStatus status;
-
-    @Column(name="created_at", nullable = false)
-    private LocalDateTime createdAt;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
