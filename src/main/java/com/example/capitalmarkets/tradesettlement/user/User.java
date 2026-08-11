@@ -27,8 +27,9 @@ public class User {
     @Column(nullable = false, length = 255)
     private String password;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private boolean enabled;
+    private UserStatus status;
 
     @Column(name="created_at", nullable = false)
     private LocalDateTime createdAt;
