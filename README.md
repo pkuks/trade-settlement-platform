@@ -59,7 +59,9 @@ The application is initially being developed as a modular monolith with clear do
               │          │   │ Planned  │   │ Planned  │
               └──────────┘   └──────────┘   └──────────┘
 
----
+
+```
+
 ## Technology Stack
 
 ### Implemented
@@ -85,7 +87,6 @@ The application is initially being developed as a modular monolith with clear do
 - OpenAPI / Swagger
 - Micrometer
 
----
 ## Current Features
 
 ### User Management
@@ -110,65 +111,3 @@ The application is initially being developed as a modular monolith with clear do
 - JWT user identity claims
 - JWT role claims
 - JWT user ID claim
-
-## Planned Features
-
-### Security
-
-- JWT authentication filter
-- Stateless authentication
-- Role-based authorization
-- User status validation
-
-### Trade Management
-
-- Trade capture
-- Trade validation
-- Trade search and filtering
-- Trade lifecycle management
-
-### Settlement
-
-- Settlement instruction creation
-- Settlement processing
-- Settlement status management
-- Optimistic locking
-- Failure handling
-- Retry processing
-- Idempotent settlement processing
-
-### Event Processing
-
-- Kafka-based trade events
-- Asynchronous settlement processing
-- At-least-once message processing
-- Idempotent consumers
-- Retry and dead-letter handling
-
-### Operations
-
-- Settlement monitoring
-- Audit trail
-- Reconciliation
-- Operational reporting
-
-### Frontend
-
-- Angular application
-- Authentication
-- Trade capture
-- Trade search
-- Settlement dashboard
-- JWT interceptor
-- Role-based UI
-
-### Testing & Production Readiness
-
-- Unit testing
-- Integration testing
-- Testcontainers
-- Dockerization
-- OpenAPI documentation
-- Health checks
-- Metrics and observability
-- CI/CD
