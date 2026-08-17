@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -48,6 +49,11 @@ public class UserServiceImpl implements UserService {
 
         return new UserResponse(newUser.getId(), newUser.getUsername(),
                 newUser.getStatus(),foundRoleNames);
+    }
+
+    @Override
+    public List<User> findAll() {
+        return userRepository.findAll();
     }
 
     public Set<Role> getValidatedRoles(Set<String> roleNames){
