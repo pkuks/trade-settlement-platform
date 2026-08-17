@@ -1,2 +1,113 @@
-# trade-settlement-platform
-A simplified capital markets platform that captures trades, validates them, processes settlements, publishes settlement events, and provides operational monitoring capabilities.
+# Trade Settlement & Custody Platform
+
+A domain-focused enterprise application for trade capture, settlement processing, and operational workflows in the capital markets domain.
+
+The project is being developed using Java and Spring Boot, with a focus on enterprise application development, secure API design, transactional data processing, and financial-domain workflows.
+
+> **Status:** Actively under development
+
+---
+
+## Overview
+
+The Trade Settlement & Custody Platform is a reference implementation of a simplified capital markets trade settlement system.
+
+The application is being developed incrementally, starting with the backend and progressively introducing trade processing, settlement workflows, event-driven processing, and an Angular frontend.
+
+The project demonstrates practical implementation of:
+
+- Enterprise REST API development
+- Domain-oriented application structure
+- Relational database design
+- Database migration management
+- Authentication and authorization
+- JWT-based security
+- Transaction management
+- Concurrency and data consistency
+- Event-driven architecture
+- Settlement processing
+
+---
+
+## Architecture
+
+The application is initially being developed as a modular monolith with clear domain boundaries.
+
+```text
+                         ┌──────────────────────┐
+                         │      Angular UI      │
+                         │       Planned        │
+                         └──────────┬───────────┘
+                                    │
+                                  REST
+                                    │
+                                    ▼
+                    ┌─────────────────────────────┐
+                    │       Spring Boot API       │
+                    │                             │
+                    │  Authentication             │
+                    │  User Management             │
+                    │  Trade Management            │
+                    │  Settlement Processing       │
+                    └──────────────┬──────────────┘
+                                   │
+                    ┌──────────────┼──────────────┐
+                    │              │              │
+                    ▼              ▼              ▼
+              ┌──────────┐   ┌──────────┐   ┌──────────┐
+              │PostgreSQL│   │  Kafka   │   │  Redis   │
+              │          │   │ Planned  │   │ Planned  │
+              └──────────┘   └──────────┘   └──────────┘
+
+
+```
+
+## Technology Stack
+
+### Implemented
+
+- Java 21
+- Spring Boot 3.5.16
+- Spring Web
+- Spring Security
+- JWT
+- Spring Data JPA
+- Hibernate
+- PostgreSQL
+- Flyway
+- Bean Validation
+- Maven
+
+### Planned
+
+- Apache Kafka
+- Testcontainers
+- Docker
+- Angular
+- OpenAPI / Swagger
+- Micrometer
+
+## Current Features
+
+### User Management
+
+- User creation REST API
+- User and Role domain model
+- User-role relationship
+- User status management
+- Request validation
+- Duplicate username handling
+- Invalid role handling
+- Global exception handling
+- BCrypt password hashing
+
+### Authentication
+
+- Spring Security authentication
+- AuthenticationManager
+- UserDetailsService
+- Password authentication
+- JWT generation
+- JWT user identity claims
+- JWT role claims
+- JWT user ID claim
