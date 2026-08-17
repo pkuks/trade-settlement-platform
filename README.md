@@ -59,6 +59,7 @@ The application is initially being developed as a modular monolith with clear do
               │          │   │ Planned  │   │ Planned  │
               └──────────┘   └──────────┘   └──────────┘
 
+---
 ## Technology Stack
 
 ### Implemented
@@ -84,7 +85,7 @@ The application is initially being developed as a modular monolith with clear do
 - OpenAPI / Swagger
 - Micrometer
 
-
+---
 ## Current Features
 
 ### User Management
