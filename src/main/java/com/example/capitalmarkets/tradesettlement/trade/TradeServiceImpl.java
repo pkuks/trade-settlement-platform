@@ -1,9 +1,6 @@
 package com.example.capitalmarkets.tradesettlement.trade;
 
-import com.example.capitalmarkets.tradesettlement.common.exception.InvalidTradeSettlementDateException;
-import com.example.capitalmarkets.tradesettlement.common.exception.ResourceNotFoundException;
-import com.example.capitalmarkets.tradesettlement.common.exception.TradeAlreadyExistsException;
-import com.example.capitalmarkets.tradesettlement.common.exception.UnSupportedCurrencyException;
+import com.example.capitalmarkets.tradesettlement.common.exception.*;
 import com.example.capitalmarkets.tradesettlement.user.User;
 import com.example.capitalmarkets.tradesettlement.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -69,6 +66,35 @@ public class TradeServiceImpl implements TradeService {
     public Page<TradeResponse> getTrades(Pageable pageable) {
         return tradeRepository.findAll(pageable)
                 .map(this::map);
+    }
+
+    @Override
+    @Transactional
+    public TradeResponse validateTrade(UUID tradeId) {
+        Trade trade = tradeRepository.findById(tradeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Trade not found"));
+
+        if (trade.getStatus() != TradeStatus.NEW){
+            throw new BusinessException("Only trades with NEW status can be validated");
+        }
+
+        trade.setStatus(TradeStatus.VALIDATED);
+        trade.setUpdatedAt(LocalDateTime.now());
+        return map(trade);
+    }
+
+    @Override
+    @Transactional
+    public TradeResponse markReadyForSettlement(UUID tradeId) {
+        Trade trade = tradeRepository.findById(tradeId)
+                .orElseThrow(()-> new ResourceNotFoundException("Trade not found"));
+
+        if (trade.getStatus()!=TradeStatus.VALIDATED){
+            throw new BusinessException("Only trades in validated status can be ready for settlement");
+        }
+        trade.setStatus(TradeStatus.READY_FOR_SETTLEMENT);
+        trade.setUpdatedAt(LocalDateTime.now());
+        return map(trade);
     }
 
     private void validateRequest(CreateTradeRequest request){

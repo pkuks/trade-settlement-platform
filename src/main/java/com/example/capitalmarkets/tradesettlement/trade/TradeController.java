@@ -39,4 +39,17 @@ public class TradeController {
     public Page<TradeResponse> getTrades(Pageable pageable){
         return tradeService.getTrades(pageable);
     }
+
+    @PatchMapping("/{id}/validate")
+    public TradeResponse validateTrade(
+            @PathVariable UUID id){
+        return tradeService.validateTrade(id);
+    }
+
+    @PatchMapping("/{id}/ready-for-settlement")
+    public TradeResponse markReadyForSettlement(
+            @PathVariable UUID id
+    ){
+        return tradeService.markReadyForSettlement(id);
+    }
 }

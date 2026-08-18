@@ -58,6 +58,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/users/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/trades").hasAnyRole("ADMIN", "TRADER")
                         .requestMatchers(HttpMethod.GET, "/api/trades/**").hasAnyRole("ADMIN","TRADER","OPERATIONS")
+                        .requestMatchers(HttpMethod.PATCH, "api/trades/*/validate").hasAnyRole("ADMIN", "OPERATIONS")
+                        .requestMatchers(HttpMethod.PATCH, "api/trades/*/ready-for-settlement").hasAnyRole("ADMIN", "OPERATIONS")
                         .anyRequest().authenticated()  // Protect all other endpoints
                 )
                 .sessionManagement(session ->

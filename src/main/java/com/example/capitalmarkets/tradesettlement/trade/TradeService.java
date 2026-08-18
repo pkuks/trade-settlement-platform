@@ -13,4 +13,8 @@ public interface TradeService {
     TradeResponse getTrade(UUID tradeId);
 
     Page<TradeResponse> getTrades(Pageable pageable);
+
+    TradeResponse validateTrade(UUID tradeId);
+
+    TradeResponse markReadyForSettlement(UUID tradeId);
 }

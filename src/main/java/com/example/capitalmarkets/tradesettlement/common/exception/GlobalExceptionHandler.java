@@ -71,4 +71,14 @@ public class GlobalExceptionHandler {
         );
         return new ResponseEntity<>(errorBody, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<Map<String, Object>> handleBusinessException(BusinessException ex){
+        Map<String, Object> errorBody = Map.of(
+                "status",HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                "error","Business Rule violated",
+                "message", ex.getMessage()
+        );
+        return new ResponseEntity<>(errorBody, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
 }
