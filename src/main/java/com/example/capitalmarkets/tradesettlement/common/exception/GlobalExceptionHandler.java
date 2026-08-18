@@ -32,4 +32,33 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorBody, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(TradeAlreadyExistsException.class)
+    public ResponseEntity<Map<String, Object>> handleTradeAlreadyExists(TradeAlreadyExistsException ex){
+        Map<String, Object> errorBody = Map.of(
+                "status", HttpStatus.BAD_REQUEST.value(),
+                "error", "Bad Request",
+                "message", ex.getMessage()
+        );
+        return new ResponseEntity<>(errorBody, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidTradeSettlementDateException.class)
+    public ResponseEntity<Map<String, Object>> handleInvalidTradeSettlementDate(InvalidTradeSettlementDateException ex){
+        Map<String, Object> errorBody = Map.of(
+                "status", HttpStatus.BAD_REQUEST.value(),
+                "error", "Bad Request",
+                "message", ex.getMessage()
+        );
+        return new ResponseEntity<>(errorBody, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UnSupportedCurrencyException.class)
+    public ResponseEntity<Map<String, Object>> handleUnSupportedCurrency(UnSupportedCurrencyException ex){
+        Map<String, Object> errorBody = Map.of(
+                "status", HttpStatus.BAD_REQUEST.value(),
+                "error", "Bad Request",
+                "message", ex.getMessage()
+        );
+        return new ResponseEntity<>(errorBody, HttpStatus.BAD_REQUEST);
+    }
 }

@@ -1,5 +1,8 @@
 package com.example.capitalmarkets.tradesettlement.trade;
 
+import com.example.capitalmarkets.tradesettlement.common.exception.InvalidTradeSettlementDateException;
+import com.example.capitalmarkets.tradesettlement.common.exception.TradeAlreadyExistsException;
+import com.example.capitalmarkets.tradesettlement.common.exception.UnSupportedCurrencyException;
 import com.example.capitalmarkets.tradesettlement.user.User;
 import com.example.capitalmarkets.tradesettlement.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +28,7 @@ public class TradeServiceImpl implements TradeService {
         validateRequest(request);
 
         if (tradeRepository.existsByTradeReference(request.tradeReference())){
-            throw new IllegalArgumentException("Trade reference already exists");
+            throw new TradeAlreadyExistsException("Trade reference already exists");
         }
 
         User user = userRepository.findByUsername(authentication.getName())
@@ -51,10 +54,10 @@ public class TradeServiceImpl implements TradeService {
 
     private void validateRequest(CreateTradeRequest request){
         if (request.settlementDate().isBefore(request.tradeDate())){
-            throw new IllegalArgumentException("Settlement date cannot be before trade date");
+            throw new InvalidTradeSettlementDateException("Settlement date cannot be before trade date");
         }
         if (!SUPPORTED_CURRENCIES.contains(request.currency().toUpperCase())){
-            throw new IllegalArgumentException("Unsupported currency");
+            throw new UnSupportedCurrencyException("Unsupported currency");
         }
     }
 
