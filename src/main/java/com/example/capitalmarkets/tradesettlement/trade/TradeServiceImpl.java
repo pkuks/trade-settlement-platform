@@ -1,20 +1,25 @@
 package com.example.capitalmarkets.tradesettlement.trade;
 
 import com.example.capitalmarkets.tradesettlement.common.exception.InvalidTradeSettlementDateException;
+import com.example.capitalmarkets.tradesettlement.common.exception.ResourceNotFoundException;
 import com.example.capitalmarkets.tradesettlement.common.exception.TradeAlreadyExistsException;
 import com.example.capitalmarkets.tradesettlement.common.exception.UnSupportedCurrencyException;
 import com.example.capitalmarkets.tradesettlement.user.User;
 import com.example.capitalmarkets.tradesettlement.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class TradeServiceImpl implements TradeService {
 
     private final TradeRepository tradeRepository;
@@ -24,6 +29,7 @@ public class TradeServiceImpl implements TradeService {
             Set.of("USD", "SGD", "EUR", "GBP");
 
     @Override
+    @Transactional
     public TradeResponse createTrade(CreateTradeRequest request, Authentication authentication) {
         validateRequest(request);
 
@@ -50,6 +56,19 @@ public class TradeServiceImpl implements TradeService {
 
         Trade savedTrade = tradeRepository.save(trade);
         return map(trade);
+    }
+
+    @Override
+    public TradeResponse getTrade(UUID tradeId) {
+        Trade trade = tradeRepository.findById(tradeId)
+                .orElseThrow(()-> new ResourceNotFoundException("Trade not found"));
+        return map(trade);
+    }
+
+    @Override
+    public Page<TradeResponse> getTrades(Pageable pageable) {
+        return tradeRepository.findAll(pageable)
+                .map(this::map);
     }
 
     private void validateRequest(CreateTradeRequest request){

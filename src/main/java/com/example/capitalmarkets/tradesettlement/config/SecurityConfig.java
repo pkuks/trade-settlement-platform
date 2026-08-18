@@ -57,6 +57,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/users/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/trades").hasAnyRole("ADMIN", "TRADER")
+                        .requestMatchers(HttpMethod.GET, "/api/trades/**").hasAnyRole("ADMIN","TRADER","OPERATIONS")
                         .anyRequest().authenticated()  // Protect all other endpoints
                 )
                 .sessionManagement(session ->
