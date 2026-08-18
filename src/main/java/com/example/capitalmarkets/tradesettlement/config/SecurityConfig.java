@@ -56,7 +56,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll() // Allow public access to login/register
                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/users/**").hasRole("ADMIN")
-                        .anyRequest().authenticated()                  // Protect all other endpoints
+                        .requestMatchers(HttpMethod.POST, "/api/trades").hasAnyRole("ADMIN", "TRADER")
+                        .anyRequest().authenticated()  // Protect all other endpoints
                 )
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
