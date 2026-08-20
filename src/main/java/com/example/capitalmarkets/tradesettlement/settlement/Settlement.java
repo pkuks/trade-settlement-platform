@@ -2,6 +2,9 @@ package com.example.capitalmarkets.tradesettlement.settlement;
 
 import com.example.capitalmarkets.tradesettlement.trade.Trade;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -11,16 +14,22 @@ import java.util.UUID;
     uniqueConstraints = {
         @UniqueConstraint(
             name = "uk_settlement_reference",
-            columnNames="settlement_reference")
+            columnNames="settlement_reference"),
+        @UniqueConstraint(
+                name = "uk_settlement_trade",
+                columnNames="trade_id")
     }
 )
+@Getter
+@Setter
+@NoArgsConstructor
 public class Settlement {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "trade_id")
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "trade_id", nullable = false)
     private Trade trade;
 
     @Enumerated(EnumType.STRING)
@@ -36,10 +45,10 @@ public class Settlement {
     @Column(name = "failure_reason", length = 500)
     private String failureReason;
 
-    @Column(nullable = false)
+    @Column(name="created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
+    @Column(name="updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
     @Version
