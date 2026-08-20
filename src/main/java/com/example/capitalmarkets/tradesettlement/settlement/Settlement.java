@@ -70,4 +70,11 @@ public class Settlement {
         status = SettlementStatus.SETTLED;
     }
 
+    public void markFailed(){
+        if (status != SettlementStatus.PROCESSING){
+            throw new BusinessException("Settlement must be PROCESSING");
+        }
+        status = SettlementStatus.FAILED;
+    }
+
 }

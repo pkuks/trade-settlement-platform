@@ -9,4 +9,6 @@ public interface SettlementService {
     SettlementResponse processSettlement(UUID settlementId);
 
     SettlementResponse settle(UUID settlementId);
+
+    SettlementResponse fail(UUID settlementId, String reason);
 }

@@ -61,8 +61,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH, "api/trades/*/validate").hasAnyRole("ADMIN", "OPERATIONS")
                         .requestMatchers(HttpMethod.PATCH, "api/trades/*/ready-for-settlement").hasAnyRole("ADMIN", "OPERATIONS")
                         .requestMatchers(HttpMethod.POST, "/api/trades/*/settlements").hasAnyRole("ADMIN", "OPERATIONS")
-                        .requestMatchers(HttpMethod.POST, "/api/trades/*/process").hasAnyRole("ADMIN", "OPERATIONS")
-                        .requestMatchers(HttpMethod.POST, "/api/trades/*/settle").hasAnyRole("ADMIN", "OPERATIONS")
+                        .requestMatchers(HttpMethod.POST, "/api/settlements/**").hasAnyRole("ADMIN", "OPERATIONS")
                         .anyRequest().authenticated()  // Protect all other endpoints
                 )
                 .sessionManagement(session ->

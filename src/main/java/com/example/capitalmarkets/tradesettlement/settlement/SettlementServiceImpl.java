@@ -87,6 +87,24 @@ public class SettlementServiceImpl implements SettlementService {
 
     }
 
+    @Override
+    @Transactional
+    public SettlementResponse fail(UUID settlementId, String reason){
+        Settlement settlement = settlementRepository.findById(settlementId)
+                .orElseThrow(()-> new ResourceNotFoundException("Settlement Not found"));
+        settlement.markFailed();
+        settlement.setFailureReason(reason);
+        settlement.setSettledAt(LocalDateTime.now());
+        settlement.setUpdatedAt(LocalDateTime.now());
+
+        Trade trade = settlement.getTrade();
+        trade.setStatus(TradeStatus.FAILED);
+        trade.setUpdatedAt(LocalDateTime.now());
+
+        return map(settlement);
+
+    }
+
     public SettlementResponse map(Settlement settlement){
         return new SettlementResponse(
                 settlement.getId(),
