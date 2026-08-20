@@ -9,6 +9,7 @@ import com.example.capitalmarkets.tradesettlement.trade.TradeStatus;
 import com.example.capitalmarkets.tradesettlement.common.exception.BusinessException;
 import com.example.capitalmarkets.tradesettlement.common.util.ReferenceGenerator;
 import java.time.LocalDateTime;
+import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.stereotype.Service;
 
@@ -50,6 +51,25 @@ public class SettlementServiceImpl implements SettlementService {
 
         Settlement save = settlementRepository.save(settlement);
 
+        return map(settlement);
+    }
+
+    @Override
+    @Transactional
+    public SettlementResponse processSettlement(UUID settlementId){
+        Settlement settlement = settlementRepository.findById(settlementId)
+                .orElseThrow(()-> new ResourceNotFoundException("Settlement not found"));
+
+        if (settlement.getStatus() != SettlementStatus.PENDING){
+            throw new BusinessException("Settlement must be PENDING");
+        }
+
+        settlement.setStatus(SettlementStatus.PROCESSING);
+        settlement.setUpdatedAt(LocalDateTime.now());
+
+        Trade trade = settlement.getTrade();
+        trade.setStatus(TradeStatus.SETTLING);
+        trade.setUpdatedAt(LocalDateTime.now());
         return map(settlement);
     }
 

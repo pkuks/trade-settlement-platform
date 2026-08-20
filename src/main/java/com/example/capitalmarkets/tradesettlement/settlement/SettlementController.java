@@ -22,5 +22,12 @@ public class SettlementController {
 
     }
 
+    @PostMapping("/{settlementId}/process")
+    public SettlementResponse processSettlement(
+            @PathVariable UUID settlementId
+    ){
+        return settlementService.processSettlement(settlementId);
+    }
+
 
 }
