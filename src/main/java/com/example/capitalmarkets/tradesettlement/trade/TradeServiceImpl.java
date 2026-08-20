@@ -74,11 +74,7 @@ public class TradeServiceImpl implements TradeService {
         Trade trade = tradeRepository.findById(tradeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Trade not found"));
 
-        if (trade.getStatus() != TradeStatus.NEW){
-            throw new BusinessException("Only trades with NEW status can be validated");
-        }
-
-        trade.setStatus(TradeStatus.VALIDATED);
+        trade.markValidated();
         trade.setUpdatedAt(LocalDateTime.now());
         return map(trade);
     }
@@ -89,10 +85,7 @@ public class TradeServiceImpl implements TradeService {
         Trade trade = tradeRepository.findById(tradeId)
                 .orElseThrow(()-> new ResourceNotFoundException("Trade not found"));
 
-        if (trade.getStatus()!=TradeStatus.VALIDATED){
-            throw new BusinessException("Only trades in validated status can be ready for settlement");
-        }
-        trade.setStatus(TradeStatus.READY_FOR_SETTLEMENT);
+        trade.markReadyForSettlement();
         trade.setUpdatedAt(LocalDateTime.now());
         return map(trade);
     }

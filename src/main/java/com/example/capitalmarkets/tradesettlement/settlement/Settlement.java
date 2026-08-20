@@ -1,6 +1,7 @@
 package com.example.capitalmarkets.tradesettlement.settlement;
 
 import com.example.capitalmarkets.tradesettlement.trade.Trade;
+import com.example.capitalmarkets.tradesettlement.common.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -54,5 +55,19 @@ public class Settlement {
     @Version
     @Column(nullable = false)
     private Long version;
+
+    public void markProcessing(){
+        if (status != SettlementStatus.PENDING){
+            throw new BusinessException("Settlement must be PENDING");
+        }
+        status = SettlementStatus.PROCESSING;
+    }
+
+    public void markSettled(){
+        if (status != SettlementStatus.PROCESSING){
+            throw new BusinessException("Settlement must be PROCESSING");
+        }
+        status = SettlementStatus.SETTLED;
+    }
 
 }

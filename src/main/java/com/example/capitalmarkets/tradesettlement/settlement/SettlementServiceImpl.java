@@ -60,11 +60,7 @@ public class SettlementServiceImpl implements SettlementService {
         Settlement settlement = settlementRepository.findById(settlementId)
                 .orElseThrow(()-> new ResourceNotFoundException("Settlement not found"));
 
-        if (settlement.getStatus() != SettlementStatus.PENDING){
-            throw new BusinessException("Settlement must be PENDING");
-        }
-
-        settlement.setStatus(SettlementStatus.PROCESSING);
+        settlement.markProcessing();
         settlement.setUpdatedAt(LocalDateTime.now());
 
         Trade trade = settlement.getTrade();
@@ -79,11 +75,7 @@ public class SettlementServiceImpl implements SettlementService {
         Settlement settlement = settlementRepository.findById(settlementId)
                 .orElseThrow(()-> new ResourceNotFoundException("Settlement not found"));
 
-        if (settlement.getStatus()!=SettlementStatus.PROCESSING){
-            throw new BusinessException("Settlement must be PROCESSING");
-        }
-
-        settlement.setStatus(SettlementStatus.SETTLED);
+        settlement.markSettled();
         settlement.setSettledAt(LocalDateTime.now());
         settlement.setUpdatedAt(LocalDateTime.now());
 

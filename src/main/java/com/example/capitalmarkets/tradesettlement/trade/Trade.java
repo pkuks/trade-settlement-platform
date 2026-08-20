@@ -1,5 +1,6 @@
 package com.example.capitalmarkets.tradesettlement.trade;
 
+import com.example.capitalmarkets.tradesettlement.common.exception.BusinessException;
 import com.example.capitalmarkets.tradesettlement.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -71,5 +72,19 @@ public class Trade {
     @Version
     @Column(nullable = false)
     private Long version;
+
+    public void markValidated(){
+        if (status != TradeStatus.NEW){
+            throw new BusinessException("Only trades with NEW status can be validated");
+        }
+        status = TradeStatus.VALIDATED;
+    }
+
+    public void markReadyForSettlement(){
+        if (status!=TradeStatus.VALIDATED){
+            throw new BusinessException("Only trades in validated status can be ready for settlement");
+        }
+        status = TradeStatus.READY_FOR_SETTLEMENT;
+    }
 
 }
