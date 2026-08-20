@@ -89,25 +89,11 @@ The application is initially being developed as a modular monolith with clear do
 
 ## Current Features
 
-### User Management
-
-- User creation REST API
-- User and Role domain model
-- User-role relationship
-- User status management
-- Request validation
-- Duplicate username handling
-- Invalid role handling
-- Global exception handling
-- BCrypt password hashing
-
-### Authentication
-
-- Spring Security authentication
-- AuthenticationManager
-- UserDetailsService
-- Password authentication
-- JWT generation
-- JWT user identity claims
-- JWT role claims
-- JWT user ID claim
+- Authentication & Authorization
+- User Management
+- Trade Lifecycle Management
+- Settlement Processing Workflow
+- Role-Based Access Control
+- Trade Search & Pagination
+- Transaction Management
+- Optimistic Locking Foundation
