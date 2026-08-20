@@ -29,5 +29,10 @@ public class SettlementController {
         return settlementService.processSettlement(settlementId);
     }
 
-
+    @PostMapping("/{settlementId}/settle")
+    public SettlementResponse settle(
+            @PathVariable UUID settlementId
+    ){
+        return settlementService.settle(settlementId);
+    }
 }

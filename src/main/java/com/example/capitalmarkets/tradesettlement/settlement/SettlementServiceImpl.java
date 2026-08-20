@@ -73,6 +73,28 @@ public class SettlementServiceImpl implements SettlementService {
         return map(settlement);
     }
 
+    @Override
+    @Transactional
+    public SettlementResponse settle(UUID settlementId){
+        Settlement settlement = settlementRepository.findById(settlementId)
+                .orElseThrow(()-> new ResourceNotFoundException("Settlement not found"));
+
+        if (settlement.getStatus()!=SettlementStatus.PROCESSING){
+            throw new BusinessException("Settlement must be PROCESSING");
+        }
+
+        settlement.setStatus(SettlementStatus.SETTLED);
+        settlement.setSettledAt(LocalDateTime.now());
+        settlement.setUpdatedAt(LocalDateTime.now());
+
+        Trade trade = settlement.getTrade();
+        trade.setStatus(TradeStatus.SETTLED);
+        trade.setUpdatedAt(LocalDateTime.now());
+
+        return map(settlement);
+
+    }
+
     public SettlementResponse map(Settlement settlement){
         return new SettlementResponse(
                 settlement.getId(),
