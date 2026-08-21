@@ -45,4 +45,11 @@ public class SettlementController {
     ){
         return settlementService.fail(settlementId, request.reason());
     }
+
+    @PostMapping("/settlements/{settlementId}/retry")
+    public SettlementResponse retry(
+            @PathVariable UUID settlementId
+    ){
+        return settlementService.retry(settlementId);
+    }
 }

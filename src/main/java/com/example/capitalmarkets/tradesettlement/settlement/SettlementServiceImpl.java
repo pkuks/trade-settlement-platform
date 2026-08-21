@@ -9,6 +9,8 @@ import com.example.capitalmarkets.tradesettlement.trade.TradeStatus;
 import com.example.capitalmarkets.tradesettlement.common.exception.BusinessException;
 import com.example.capitalmarkets.tradesettlement.common.util.ReferenceGenerator;
 import java.time.LocalDateTime;
+
+import org.springframework.cglib.core.Local;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.stereotype.Service;
@@ -101,6 +103,20 @@ public class SettlementServiceImpl implements SettlementService {
         trade.setStatus(TradeStatus.FAILED);
         trade.setUpdatedAt(LocalDateTime.now());
 
+        return map(settlement);
+
+    }
+
+    @Override
+    @Transactional
+    public SettlementResponse retry(UUID settlementId){
+        Settlement settlement = settlementRepository.findById(settlementId)
+                .orElseThrow(()-> new ResourceNotFoundException("Settlement not found"));
+        settlement.retry();
+        settlement.setUpdatedAt(LocalDateTime.now());
+        Trade trade = settlement.getTrade();
+        trade.markReadyForSettlement();
+        trade.setUpdatedAt(LocalDateTime.now());
         return map(settlement);
 
     }

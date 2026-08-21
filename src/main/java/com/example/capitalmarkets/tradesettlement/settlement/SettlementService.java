@@ -11,4 +11,6 @@ public interface SettlementService {
     SettlementResponse settle(UUID settlementId);
 
     SettlementResponse fail(UUID settlementId, String reason);
+
+    SettlementResponse retry(UUID settlementId);
 }
