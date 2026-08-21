@@ -56,6 +56,9 @@ public class Settlement {
     @Column(nullable = false)
     private Long version;
 
+    @Column(nullable = false)
+    private Integer retryCount = 0;
+
     public void markProcessing(){
         if (status != SettlementStatus.PENDING){
             throw new BusinessException("Settlement must be PENDING");
@@ -75,6 +78,16 @@ public class Settlement {
             throw new BusinessException("Settlement must be PROCESSING");
         }
         status = SettlementStatus.FAILED;
+    }
+
+    public void retry(){
+        if (status != SettlementStatus.FAILED){
+            throw new BusinessException("Settlement must be FAILED");
+        }
+        status = SettlementStatus.PENDING;
+        failureReason = null;
+        retryCount++;
+
     }
 
 }
