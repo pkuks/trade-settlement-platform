@@ -1,4 +1,4 @@
-# Trade Settlement & Custody Platform
+# Capital Markets Trade Settlement Platform
 
 A domain-focused enterprise application for trade capture, settlement processing, and operational workflows in the capital markets domain.
 
@@ -10,7 +10,7 @@ The project is being developed using Java and Spring Boot, with a focus on enter
 
 ## Overview
 
-The Trade Settlement & Custody Platform is a reference implementation of a simplified capital markets trade settlement system.
+The Trade Settlement Platform is a reference implementation of a simplified capital markets trade settlement system.
 
 The application is being developed incrementally, starting with the backend and progressively introducing trade processing, settlement workflows, event-driven processing, and an Angular frontend.
 
@@ -89,11 +89,13 @@ The application is initially being developed as a modular monolith with clear do
 
 ## Current Features
 
-- Authentication & Authorization
-- User Management
+- JWT Authentication & Authorization
+- User & Role Management
 - Trade Lifecycle Management
-- Settlement Processing Workflow
-- Role-Based Access Control
-- Trade Search & Pagination
-- Transaction Management
+- Settlement Lifecycle Management
+- Settlement Retry Processing
+- Audit Trail & Event History
+- Pagination & Search APIs
 - Optimistic Locking Foundation
+- PostgreSQL + Flyway Migrations
+- Spring Boot 3.5 + Java 21
