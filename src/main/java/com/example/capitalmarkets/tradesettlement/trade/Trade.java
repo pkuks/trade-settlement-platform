@@ -81,9 +81,12 @@ public class Trade {
     }
 
     public void markReadyForSettlement(){
-        if (status!=TradeStatus.VALIDATED){
-            throw new BusinessException("Only trades in validated status can be ready for settlement");
+        boolean isValidState = (status == TradeStatus.VALIDATED || status == TradeStatus.FAILED);
+
+        if (!isValidState) {
+            throw new BusinessException("Only trades in validated or failed status can be ready for settlement");
         }
+
         status = TradeStatus.READY_FOR_SETTLEMENT;
     }
 

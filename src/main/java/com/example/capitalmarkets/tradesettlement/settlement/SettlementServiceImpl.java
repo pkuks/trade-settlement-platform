@@ -2,6 +2,7 @@ package com.example.capitalmarkets.tradesettlement.settlement;
 
 import java.util.UUID;
 
+import com.example.capitalmarkets.tradesettlement.audit.AuditEventType;
 import com.example.capitalmarkets.tradesettlement.common.exception.ResourceNotFoundException;
 import com.example.capitalmarkets.tradesettlement.trade.TradeRepository;
 import com.example.capitalmarkets.tradesettlement.trade.Trade;
@@ -9,26 +10,22 @@ import com.example.capitalmarkets.tradesettlement.trade.TradeStatus;
 import com.example.capitalmarkets.tradesettlement.common.exception.BusinessException;
 import com.example.capitalmarkets.tradesettlement.common.util.ReferenceGenerator;
 import java.time.LocalDateTime;
+import com.example.capitalmarkets.tradesettlement.audit.AuditService;
 
-import org.springframework.cglib.core.Local;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.stereotype.Service;
+import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class SettlementServiceImpl implements SettlementService {
 
     private final TradeRepository tradeRepository;
 
     private final SettlementRepository settlementRepository;
 
-    public SettlementServiceImpl(
-            SettlementRepository settlementRepository,
-            TradeRepository tradeRepository
-    ){
-        this.settlementRepository = settlementRepository;
-        this.tradeRepository = tradeRepository;
-    }
+    private final AuditService auditEventService;
 
     @Override
     public SettlementResponse createSettlement(UUID tradeId) {
@@ -53,6 +50,14 @@ public class SettlementServiceImpl implements SettlementService {
 
         Settlement save = settlementRepository.save(settlement);
 
+        auditEventService.audit(
+                "SETTLEMENT",
+                save.getId(),
+                AuditEventType.SETTLEMENT_CREATED,
+                save.getTrade().getCreatedBy().getUsername(),
+                "Settlement created"
+        );
+
         return map(settlement);
     }
 
@@ -68,7 +73,13 @@ public class SettlementServiceImpl implements SettlementService {
         Trade trade = settlement.getTrade();
         trade.setStatus(TradeStatus.SETTLING);
         trade.setUpdatedAt(LocalDateTime.now());
-        return map(settlement);
+        auditEventService.audit(
+                "SETTLEMENT",
+                settlement.getId(),
+                AuditEventType.SETTLEMENT_PROCESSING,
+                trade.getCreatedBy().getUsername(),
+                "Settlement processing"
+        );return map(settlement);
     }
 
     @Override
@@ -84,7 +95,13 @@ public class SettlementServiceImpl implements SettlementService {
         Trade trade = settlement.getTrade();
         trade.setStatus(TradeStatus.SETTLED);
         trade.setUpdatedAt(LocalDateTime.now());
-
+        auditEventService.audit(
+                "SETTLEMENT",
+                settlement.getId(),
+                AuditEventType.SETTLEMENT_SETTLED,
+                trade.getCreatedBy().getUsername(),
+                "Settlement settled"
+        );
         return map(settlement);
 
     }
@@ -102,7 +119,13 @@ public class SettlementServiceImpl implements SettlementService {
         Trade trade = settlement.getTrade();
         trade.setStatus(TradeStatus.FAILED);
         trade.setUpdatedAt(LocalDateTime.now());
-
+        auditEventService.audit(
+                "SETTLEMENT",
+                settlement.getId(),
+                AuditEventType.SETTLEMENT_FAILED,
+                trade.getCreatedBy().getUsername(),
+                "Settlement failed"
+        );
         return map(settlement);
 
     }
@@ -117,6 +140,13 @@ public class SettlementServiceImpl implements SettlementService {
         Trade trade = settlement.getTrade();
         trade.markReadyForSettlement();
         trade.setUpdatedAt(LocalDateTime.now());
+        auditEventService.audit(
+                "SETTLEMENT",
+                settlement.getId(),
+                AuditEventType.SETTLEMENT_RETRIED,
+                trade.getCreatedBy().getUsername(),
+                "Settlement retried"
+        );
         return map(settlement);
 
     }

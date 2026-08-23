@@ -1,5 +1,7 @@
 package com.example.capitalmarkets.tradesettlement.trade;
 
+import com.example.capitalmarkets.tradesettlement.audit.AuditEventType;
+import com.example.capitalmarkets.tradesettlement.audit.AuditService;
 import com.example.capitalmarkets.tradesettlement.common.exception.*;
 import com.example.capitalmarkets.tradesettlement.user.User;
 import com.example.capitalmarkets.tradesettlement.user.UserRepository;
@@ -21,6 +23,7 @@ public class TradeServiceImpl implements TradeService {
 
     private final TradeRepository tradeRepository;
     private final UserRepository userRepository;
+    private final AuditService auditService;
 
     private static final Set<String> SUPPORTED_CURRENCIES =
             Set.of("USD", "SGD", "EUR", "GBP");
@@ -52,6 +55,14 @@ public class TradeServiceImpl implements TradeService {
         trade.setUpdatedAt(LocalDateTime.now());
 
         Trade savedTrade = tradeRepository.save(trade);
+
+        auditService.audit(
+                "TRADE",
+                savedTrade.getId(),
+                AuditEventType.TRADE_CREATED,
+                user.getUsername(),
+                "Trade created"
+        );
         return map(trade);
     }
 
@@ -76,6 +87,14 @@ public class TradeServiceImpl implements TradeService {
 
         trade.markValidated();
         trade.setUpdatedAt(LocalDateTime.now());
+
+        auditService.audit(
+                "TRADE",
+                trade.getId(),
+                AuditEventType.TRADE_VALIDATED,
+                trade.getCreatedBy().getUsername(),
+                "Trade Validated"
+        );
         return map(trade);
     }
 
@@ -87,6 +106,14 @@ public class TradeServiceImpl implements TradeService {
 
         trade.markReadyForSettlement();
         trade.setUpdatedAt(LocalDateTime.now());
+
+        auditService.audit(
+                "TRADE",
+                trade.getId(),
+                AuditEventType.TRADE_READY_FOR_SETTLEMENT,
+                trade.getCreatedBy().getUsername(),
+                "Trade Ready for settlement"
+        );
         return map(trade);
     }
 
