@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import com.example.capitalmarkets.tradesettlement.audit.AuditEventType;
 import com.example.capitalmarkets.tradesettlement.common.exception.ResourceNotFoundException;
+import com.example.capitalmarkets.tradesettlement.kafka.SettlementEventProducer;
 import com.example.capitalmarkets.tradesettlement.trade.TradeRepository;
 import com.example.capitalmarkets.tradesettlement.trade.Trade;
 import com.example.capitalmarkets.tradesettlement.trade.TradeStatus;
@@ -11,9 +12,9 @@ import com.example.capitalmarkets.tradesettlement.common.exception.BusinessExcep
 import com.example.capitalmarkets.tradesettlement.common.util.ReferenceGenerator;
 import java.time.LocalDateTime;
 import com.example.capitalmarkets.tradesettlement.audit.AuditService;
+import com.example.capitalmarkets.tradesettlement.event.SettlementCreatedEvent;
 
 import org.springframework.transaction.annotation.Transactional;
-
 import org.springframework.stereotype.Service;
 import lombok.AllArgsConstructor;
 
@@ -27,7 +28,12 @@ public class SettlementServiceImpl implements SettlementService {
 
     private final AuditService auditEventService;
 
+//    private final ApplicationEventPublisher eventPublisher;
+
+    private final SettlementEventProducer settlementEventProducer;
+
     @Override
+    @Transactional
     public SettlementResponse createSettlement(UUID tradeId) {
 
         Trade trade = tradeRepository.findById(tradeId)
@@ -48,15 +54,13 @@ public class SettlementServiceImpl implements SettlementService {
         settlement.setCreatedAt(LocalDateTime.now());
         settlement.setUpdatedAt(LocalDateTime.now());
 
-        Settlement save = settlementRepository.save(settlement);
-
-        auditEventService.audit(
-                "SETTLEMENT",
-                save.getId(),
-                AuditEventType.SETTLEMENT_CREATED,
-                save.getTrade().getCreatedBy().getUsername(),
-                "Settlement created"
-        );
+        Settlement saved = settlementRepository.save(settlement);
+        settlementEventProducer.publishSettlementCreated(new SettlementCreatedEvent(
+                saved.getId(),
+                trade.getId(),
+                saved.getSettlementReference(),
+                trade.getCreatedBy().getUsername()
+        ));
 
         return map(settlement);
     }
