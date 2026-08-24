@@ -1,101 +1,270 @@
 # Capital Markets Trade Settlement Platform
 
-A domain-focused enterprise application for trade capture, settlement processing, and operational workflows in the capital markets domain.
+A personal learning project exploring **trade processing and settlement workflows in capital markets**, with a focus on enterprise application architecture, reliable transaction processing, security, auditability and event-driven processing.
 
-The project is being developed using Java and Spring Boot, with a focus on enterprise application development, secure API design, transactional data processing, and financial-domain workflows.
+The platform models key stages of the trade lifecycle, from trade creation and validation through settlement instruction creation, settlement processing, status management, failure handling and retry.
 
-> **Status:** Actively under development
+The project is **actively under development**, with additional capabilities being explored to deepen understanding of capital markets and post-trade processing.
 
 ---
 
-## Overview
+## Key Capabilities
 
-The Trade Settlement Platform is a reference implementation of a simplified capital markets trade settlement system.
+### Trade Management
 
-The application is being developed incrementally, starting with the backend and progressively introducing trade processing, settlement workflows, event-driven processing, and an Angular frontend.
+* Trade creation and validation
+* Trade retrieval and search
+* Trade reference uniqueness validation
+* Currency and date validations
+* Trade lifecycle and status management
 
-The project demonstrates practical implementation of:
+### Settlement Processing
 
-- Enterprise REST API development
-- Domain-oriented application structure
-- Relational database design
-- Database migration management
-- Authentication and authorization
-- JWT-based security
-- Transaction management
-- Concurrency and data consistency
-- Event-driven architecture
-- Settlement processing
+* Settlement instruction creation
+* Settlement processing workflow
+* Settlement and failure handling
+* Settlement retry processing
+* Settlement status management
+
+### Security
+
+* JWT-based authentication
+* Role-based authorization
+* Protected REST APIs
+* Custom Spring Security authentication flow
+
+### Event-Driven Processing
+
+* Kafka-based event publishing and consumption
+* Asynchronous processing of business events
+* Idempotent processing considerations
+* Event-driven settlement workflow
+
+### Audit & Reliability
+
+* Business event audit trail
+* Centralized exception handling
+* Business rule validation
+* Database migrations using Flyway
+* Transactional processing using Spring transactions
+
+---
+
+## Technology Stack
+
+| Area               | Technology                 |
+| ------------------ | -------------------------- |
+| Language           | Java 21                    |
+| Framework          | Spring Boot                |
+| Security           | Spring Security, JWT       |
+| Persistence        | Spring Data JPA, Hibernate |
+| Database           | PostgreSQL                 |
+| Messaging          | Apache Kafka               |
+| Database Migration | Flyway                     |
+| Containerization   | Docker                     |
+| Build              | Maven                      |
+| API                | REST                       |
 
 ---
 
 ## Architecture
 
-The application is initially being developed as a modular monolith with clear domain boundaries.
+The current implementation uses a modular Spring Boot architecture with REST APIs, PostgreSQL persistence and Kafka-based event-driven processing.
 
 ```text
-                         ┌──────────────────────┐
-                         │      Angular UI      │
-                         │       Planned        │
-                         └──────────┬───────────┘
-                                    │
-                                  REST
-                                    │
-                                    ▼
-                    ┌─────────────────────────────┐
-                    │       Spring Boot API       │
-                    │                             │
-                    │  Authentication             │
-                    │  User Management             │
-                    │  Trade Management            │
-                    │  Settlement Processing       │
-                    └──────────────┬──────────────┘
-                                   │
-                    ┌──────────────┼──────────────┐
-                    │              │              │
-                    ▼              ▼              ▼
-              ┌──────────┐   ┌──────────┐   ┌──────────┐
-              │PostgreSQL│   │  Kafka   │   │  Redis   │
-              │          │   │ Planned  │   │ Planned  │
-              └──────────┘   └──────────┘   └──────────┘
 
+                    ┌─────────────────────┐
+                    │       Client        │
+                    │      REST API       │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │   Spring Boot App   │
+                    │                     │
+                    │  Trade APIs         │
+                    │  Settlement APIs    │
+                    │  Security           │
+                    │  Business Services  │
+                    └───────┬───────┬─────┘
+                            │       │
+                            │       ▼
+                            │  ┌─────────────┐
+                            │  │    Kafka    │
+                            │  │    Events   │
+                            │  └──────┬──────┘
+                            │         │
+                            ▼         ▼
+                    ┌─────────────────────┐
+                    │     PostgreSQL      │
+                    │                     │
+                    │ Trade               │
+                    │ Settlement          │
+                    │ Audit               │
+                    └─────────────────────┘
 
 ```
 
-## Technology Stack
+The architecture is being evolved incrementally to explore patterns applicable to distributed and event-driven financial systems.
+
+---
+## Trade & Settlement Workflow
+
+The current workflow broadly follows:
+
+```text
+Trade Creation
+      │
+      ▼
+Trade Validation
+      │
+      ▼
+Trade Ready for Settlement
+      │
+      ▼
+Settlement Instruction Creation
+      │
+      ▼
+Settlement Processing
+      │
+      ├──────────────► Failed
+      │                  │
+      │                  ▼
+      │                Retry
+      │                  │
+      │                  └──────► Settlement Processing
+      │
+      ▼
+   Settled
+```
+
+Each significant business transition can be captured through the audit trail.
+
+---
+
+## API
+
+The application exposes REST APIs for authentication, trade management and settlement processing.
+
+Examples include:
+
+```text
+POST   /api/auth/register
+POST   /api/auth/login
+GET    /api/me
+
+POST   /api/trades
+GET    /api/trades
+GET    /api/trades/{id}
+PATCH   /api/trades/{id}/validate
+POST   /api/trades/{id}/ready-for-settlement
+
+POST   /api/trades/{id}/settlements
+POST   /api/settlements/{id}/process
+POST   /api/settlements/{id}/settle
+POST   /api/settlements/{id}/fail
+POST   /api/settlements/{id}/retry
+```
+
+Authentication-protected APIs require a valid JWT token.
+
+---
+
+## Project Status
+
+**Actively under development**
 
 ### Implemented
 
-- Java 21
-- Spring Boot 3.5.16
-- Spring Web
-- Spring Security
-- JWT
-- Spring Data JPA
-- Hibernate
-- PostgreSQL
-- Flyway
-- Bean Validation
-- Maven
+* Trade lifecycle management
+* Trade validation
+* Settlement instruction creation
+* Settlement processing
+* Settlement, failure and retry workflows
+* JWT authentication and role-based authorization
+* Kafka event-driven processing
+* Audit trail
+* PostgreSQL persistence
+* Flyway database migrations
+* REST APIs
+* Centralized exception handling
 
-### Planned
+### Currently Exploring
 
-- Apache Kafka
-- Testcontainers
-- Docker
-- Angular
-- OpenAPI / Swagger
-- Micrometer
+* Advanced Kafka processing patterns
+* Reliable event delivery
+* Idempotent message processing
+* Transactional Outbox Pattern
+* Distributed transaction considerations
+* Reconciliation workflows
+* Additional post-trade processing capabilities
 
-## Current Features
+---
 
-- JWT Authentication & Authorization
-- User & Role Management
-- Trade Lifecycle Management
-- Settlement Lifecycle Management
-- Settlement Retry Processing
-- Audit Trail & Event History
-- Pagination & Search APIs
-- Optimistic Locking Foundation
-- PostgreSQL + Flyway Migrations
-- Spring Boot 3.5 + Java 21
+## Running Locally
+
+### Prerequisites
+
+* Java 21
+* Maven
+* PostgreSQL
+* Docker Desktop
+
+Kafka can be started using the project's Docker configuration.
+
+### Build
+
+```bash
+mvn clean install
+```
+
+### Run
+
+```bash
+mvn spring-boot:run
+```
+
+Additional setup and configuration details are available in the project documentation.
+
+---
+
+## Learning Objectives
+
+This project is intended to provide hands-on exploration of:
+
+* Capital markets trade and settlement processes
+* Post-trade workflows
+* Enterprise Java and Spring Boot development
+* Transaction management and data consistency
+* Event-driven architecture
+* Kafka messaging
+* Authentication and authorization
+* Database design and persistence
+* Reliability and failure handling
+* Distributed-system design considerations
+
+---
+
+## Future Enhancements
+
+Potential areas for further development include:
+
+* Trade matching
+* Settlement netting
+* Reconciliation
+* Custody position management
+* Corporate actions
+* SWIFT message simulation
+* Dead-letter queue and failure recovery
+* Observability and monitoring
+* Performance and load testing
+* Kubernetes deployment
+* CI/CD pipeline
+
+---
+
+## About
+
+This is a personal learning and portfolio project focused on **capital markets, trade settlement, event-driven architecture and enterprise application development**.
+
+The platform is continuously enhanced as additional domain concepts and technical patterns are explored.
