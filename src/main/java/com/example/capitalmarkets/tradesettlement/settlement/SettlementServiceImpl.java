@@ -2,8 +2,9 @@ package com.example.capitalmarkets.tradesettlement.settlement;
 
 import java.util.UUID;
 
-import com.example.capitalmarkets.tradesettlement.audit.AuditEventType;
+import com.example.capitalmarkets.tradesettlement.event.EventType;
 import com.example.capitalmarkets.tradesettlement.common.exception.ResourceNotFoundException;
+import com.example.capitalmarkets.tradesettlement.event.SettlementEvent;
 import com.example.capitalmarkets.tradesettlement.kafka.SettlementEventProducer;
 import com.example.capitalmarkets.tradesettlement.trade.TradeRepository;
 import com.example.capitalmarkets.tradesettlement.trade.Trade;
@@ -12,7 +13,6 @@ import com.example.capitalmarkets.tradesettlement.common.exception.BusinessExcep
 import com.example.capitalmarkets.tradesettlement.common.util.ReferenceGenerator;
 import java.time.LocalDateTime;
 import com.example.capitalmarkets.tradesettlement.audit.AuditService;
-import com.example.capitalmarkets.tradesettlement.event.SettlementCreatedEvent;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
@@ -27,8 +27,6 @@ public class SettlementServiceImpl implements SettlementService {
     private final SettlementRepository settlementRepository;
 
     private final AuditService auditEventService;
-
-//    private final ApplicationEventPublisher eventPublisher;
 
     private final SettlementEventProducer settlementEventProducer;
 
@@ -55,11 +53,14 @@ public class SettlementServiceImpl implements SettlementService {
         settlement.setUpdatedAt(LocalDateTime.now());
 
         Settlement saved = settlementRepository.save(settlement);
-        settlementEventProducer.publishSettlementCreated(new SettlementCreatedEvent(
+        settlementEventProducer.publishSettlementEvent(new SettlementEvent(
+                EventType.SETTLEMENT_CREATED,
                 saved.getId(),
                 trade.getId(),
                 saved.getSettlementReference(),
-                trade.getCreatedBy().getUsername()
+                trade.getCreatedBy().getUsername(),
+                null,
+                null
         ));
 
         return map(settlement);
@@ -77,13 +78,17 @@ public class SettlementServiceImpl implements SettlementService {
         Trade trade = settlement.getTrade();
         trade.setStatus(TradeStatus.SETTLING);
         trade.setUpdatedAt(LocalDateTime.now());
-        auditEventService.audit(
-                "SETTLEMENT",
+        settlementEventProducer.publishSettlementEvent(new SettlementEvent(
+                EventType.SETTLEMENT_PROCESSING,
                 settlement.getId(),
-                AuditEventType.SETTLEMENT_PROCESSING,
+                trade.getId(),
+                settlement.getSettlementReference(),
                 trade.getCreatedBy().getUsername(),
-                "Settlement processing"
-        );return map(settlement);
+                null,
+                null
+        ));
+
+        return map(settlement);
     }
 
     @Override
@@ -99,13 +104,16 @@ public class SettlementServiceImpl implements SettlementService {
         Trade trade = settlement.getTrade();
         trade.setStatus(TradeStatus.SETTLED);
         trade.setUpdatedAt(LocalDateTime.now());
-        auditEventService.audit(
-                "SETTLEMENT",
+
+        settlementEventProducer.publishSettlementEvent(new SettlementEvent(
+                EventType.SETTLEMENT_SETTLED,
                 settlement.getId(),
-                AuditEventType.SETTLEMENT_SETTLED,
+                trade.getId(),
+                settlement.getSettlementReference(),
                 trade.getCreatedBy().getUsername(),
-                "Settlement settled"
-        );
+                null,
+                null
+        ));
         return map(settlement);
 
     }
@@ -123,13 +131,15 @@ public class SettlementServiceImpl implements SettlementService {
         Trade trade = settlement.getTrade();
         trade.setStatus(TradeStatus.FAILED);
         trade.setUpdatedAt(LocalDateTime.now());
-        auditEventService.audit(
-                "SETTLEMENT",
+        settlementEventProducer.publishSettlementEvent(new SettlementEvent(
+                EventType.SETTLEMENT_FAILED,
                 settlement.getId(),
-                AuditEventType.SETTLEMENT_FAILED,
+                trade.getId(),
+                settlement.getSettlementReference(),
                 trade.getCreatedBy().getUsername(),
-                "Settlement failed"
-        );
+                reason,
+                null
+        ));
         return map(settlement);
 
     }
@@ -144,13 +154,15 @@ public class SettlementServiceImpl implements SettlementService {
         Trade trade = settlement.getTrade();
         trade.markReadyForSettlement();
         trade.setUpdatedAt(LocalDateTime.now());
-        auditEventService.audit(
-                "SETTLEMENT",
+        settlementEventProducer.publishSettlementEvent(new SettlementEvent(
+                EventType.SETTLEMENT_RETRIED,
                 settlement.getId(),
-                AuditEventType.SETTLEMENT_RETRIED,
+                trade.getId(),
+                settlement.getSettlementReference(),
                 trade.getCreatedBy().getUsername(),
-                "Settlement retried"
-        );
+                null,
+                settlement.getRetryCount()
+        ));
         return map(settlement);
 
     }
