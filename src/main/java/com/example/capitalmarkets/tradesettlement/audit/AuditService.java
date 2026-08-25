@@ -1,5 +1,7 @@
 package com.example.capitalmarkets.tradesettlement.audit;
 
+import com.example.capitalmarkets.tradesettlement.event.EventType;
+
 import java.util.UUID;
 import java.util.List;
 
@@ -7,7 +9,7 @@ public interface AuditService {
     void audit(
             String entityType,
             UUID entityId,
-            AuditEventType eventType,
+            EventType eventType,
             String username,
             String details
     );

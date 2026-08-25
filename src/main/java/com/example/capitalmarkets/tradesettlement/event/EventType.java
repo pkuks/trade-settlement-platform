@@ -1,6 +1,6 @@
-package com.example.capitalmarkets.tradesettlement.audit;
+package com.example.capitalmarkets.tradesettlement.event;
 
-public enum AuditEventType {
+public enum EventType {
     TRADE_CREATED,
     TRADE_VALIDATED,
     TRADE_READY_FOR_SETTLEMENT,

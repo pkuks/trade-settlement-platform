@@ -2,6 +2,8 @@ package com.example.capitalmarkets.tradesettlement.audit;
 
 import java.util.UUID;
 import java.lang.Override;
+
+import com.example.capitalmarkets.tradesettlement.event.EventType;
 import org.springframework.stereotype.Service;
 import lombok.AllArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +21,7 @@ public class AuditServiceImpl implements AuditService {
     public void audit(
             String entityType,
             UUID entityId,
-            AuditEventType eventType,
+            EventType eventType,
             String username,
             String details
     ){
