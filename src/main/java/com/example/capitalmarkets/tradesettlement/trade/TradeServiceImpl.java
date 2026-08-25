@@ -1,6 +1,6 @@
 package com.example.capitalmarkets.tradesettlement.trade;
 
-import com.example.capitalmarkets.tradesettlement.audit.AuditEventType;
+import com.example.capitalmarkets.tradesettlement.event.EventType;
 import com.example.capitalmarkets.tradesettlement.audit.AuditService;
 import com.example.capitalmarkets.tradesettlement.common.exception.*;
 import com.example.capitalmarkets.tradesettlement.user.User;
@@ -59,7 +59,7 @@ public class TradeServiceImpl implements TradeService {
         auditService.audit(
                 "TRADE",
                 savedTrade.getId(),
-                AuditEventType.TRADE_CREATED,
+                EventType.TRADE_CREATED,
                 user.getUsername(),
                 "Trade created"
         );
@@ -91,7 +91,7 @@ public class TradeServiceImpl implements TradeService {
         auditService.audit(
                 "TRADE",
                 trade.getId(),
-                AuditEventType.TRADE_VALIDATED,
+                EventType.TRADE_VALIDATED,
                 trade.getCreatedBy().getUsername(),
                 "Trade Validated"
         );
@@ -110,7 +110,7 @@ public class TradeServiceImpl implements TradeService {
         auditService.audit(
                 "TRADE",
                 trade.getId(),
-                AuditEventType.TRADE_READY_FOR_SETTLEMENT,
+                EventType.TRADE_READY_FOR_SETTLEMENT,
                 trade.getCreatedBy().getUsername(),
                 "Trade Ready for settlement"
         );
