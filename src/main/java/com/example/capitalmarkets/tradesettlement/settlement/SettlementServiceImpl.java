@@ -13,7 +13,8 @@ import com.example.capitalmarkets.tradesettlement.common.exception.BusinessExcep
 import com.example.capitalmarkets.tradesettlement.common.util.ReferenceGenerator;
 import java.time.LocalDateTime;
 import com.example.capitalmarkets.tradesettlement.audit.AuditService;
-
+import com.example.capitalmarkets.tradesettlement.outbox.OutboxService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import lombok.AllArgsConstructor;
@@ -30,9 +31,11 @@ public class SettlementServiceImpl implements SettlementService {
 
     private final SettlementEventProducer settlementEventProducer;
 
+    private final OutboxService outboxService;
+
     @Override
     @Transactional
-    public SettlementResponse createSettlement(UUID tradeId) {
+    public SettlementResponse createSettlement(UUID tradeId) throws JsonProcessingException {
 
         Trade trade = tradeRepository.findById(tradeId)
                 .orElseThrow(()-> new ResourceNotFoundException("Trade not found"));
@@ -53,22 +56,24 @@ public class SettlementServiceImpl implements SettlementService {
         settlement.setUpdatedAt(LocalDateTime.now());
 
         Settlement saved = settlementRepository.save(settlement);
-        settlementEventProducer.publishSettlementEvent(new SettlementEvent(
-                EventType.SETTLEMENT_CREATED,
-                saved.getId(),
-                trade.getId(),
-                saved.getSettlementReference(),
-                trade.getCreatedBy().getUsername(),
-                null,
-                null
-        ));
+        SettlementEvent event = SettlementEvent.builder()
+                .eventType(EventType.SETTLEMENT_CREATED)
+                .settlementId(saved.getId())
+                .tradeId(trade.getId())
+                .settlementReference(saved.getSettlementReference())
+                .username(trade.getCreatedBy().getUsername())
+                .reason(null)
+                .retryCount(null)
+                .build();
+
+        outboxService.saveEvent(EventType.SETTLEMENT_CREATED,saved.getId(),event);
 
         return map(settlement);
     }
 
     @Override
     @Transactional
-    public SettlementResponse processSettlement(UUID settlementId){
+    public SettlementResponse processSettlement(UUID settlementId) throws JsonProcessingException {
         Settlement settlement = settlementRepository.findById(settlementId)
                 .orElseThrow(()-> new ResourceNotFoundException("Settlement not found"));
 
@@ -78,22 +83,23 @@ public class SettlementServiceImpl implements SettlementService {
         Trade trade = settlement.getTrade();
         trade.setStatus(TradeStatus.SETTLING);
         trade.setUpdatedAt(LocalDateTime.now());
-        settlementEventProducer.publishSettlementEvent(new SettlementEvent(
-                EventType.SETTLEMENT_PROCESSING,
-                settlement.getId(),
-                trade.getId(),
-                settlement.getSettlementReference(),
-                trade.getCreatedBy().getUsername(),
-                null,
-                null
-        ));
+        SettlementEvent event = SettlementEvent.builder()
+                .eventType(EventType.SETTLEMENT_PROCESSING)
+                .settlementId(settlement.getId())
+                .tradeId(trade.getId())
+                .settlementReference(settlement.getSettlementReference())
+                .username(trade.getCreatedBy().getUsername())
+                .reason(null)
+                .retryCount(null)
+                .build();
 
+        outboxService.saveEvent(EventType.SETTLEMENT_PROCESSING,settlement.getId(),event);
         return map(settlement);
     }
 
     @Override
     @Transactional
-    public SettlementResponse settle(UUID settlementId){
+    public SettlementResponse settle(UUID settlementId) throws JsonProcessingException {
         Settlement settlement = settlementRepository.findById(settlementId)
                 .orElseThrow(()-> new ResourceNotFoundException("Settlement not found"));
 
@@ -104,23 +110,24 @@ public class SettlementServiceImpl implements SettlementService {
         Trade trade = settlement.getTrade();
         trade.setStatus(TradeStatus.SETTLED);
         trade.setUpdatedAt(LocalDateTime.now());
+        SettlementEvent event = SettlementEvent.builder()
+                .eventType(EventType.SETTLEMENT_SETTLED)
+                .settlementId(settlement.getId())
+                .tradeId(trade.getId())
+                .settlementReference(settlement.getSettlementReference())
+                .username(trade.getCreatedBy().getUsername())
+                .reason(null)
+                .retryCount(null)
+                .build();
 
-        settlementEventProducer.publishSettlementEvent(new SettlementEvent(
-                EventType.SETTLEMENT_SETTLED,
-                settlement.getId(),
-                trade.getId(),
-                settlement.getSettlementReference(),
-                trade.getCreatedBy().getUsername(),
-                null,
-                null
-        ));
+        outboxService.saveEvent(EventType.SETTLEMENT_SETTLED,settlement.getId(),event);
         return map(settlement);
 
     }
 
     @Override
     @Transactional
-    public SettlementResponse fail(UUID settlementId, String reason){
+    public SettlementResponse fail(UUID settlementId, String reason) throws JsonProcessingException {
         Settlement settlement = settlementRepository.findById(settlementId)
                 .orElseThrow(()-> new ResourceNotFoundException("Settlement Not found"));
         settlement.markFailed();
@@ -131,22 +138,24 @@ public class SettlementServiceImpl implements SettlementService {
         Trade trade = settlement.getTrade();
         trade.setStatus(TradeStatus.FAILED);
         trade.setUpdatedAt(LocalDateTime.now());
-        settlementEventProducer.publishSettlementEvent(new SettlementEvent(
-                EventType.SETTLEMENT_FAILED,
-                settlement.getId(),
-                trade.getId(),
-                settlement.getSettlementReference(),
-                trade.getCreatedBy().getUsername(),
-                reason,
-                null
-        ));
+        SettlementEvent event = SettlementEvent.builder()
+                .eventType(EventType.SETTLEMENT_FAILED)
+                .settlementId(settlement.getId())
+                .tradeId(trade.getId())
+                .settlementReference(settlement.getSettlementReference())
+                .username(trade.getCreatedBy().getUsername())
+                .reason(reason)
+                .retryCount(null)
+                .build();
+
+        outboxService.saveEvent(EventType.SETTLEMENT_FAILED,settlement.getId(),event);
         return map(settlement);
 
     }
 
     @Override
     @Transactional
-    public SettlementResponse retry(UUID settlementId){
+    public SettlementResponse retry(UUID settlementId) throws JsonProcessingException {
         Settlement settlement = settlementRepository.findById(settlementId)
                 .orElseThrow(()-> new ResourceNotFoundException("Settlement not found"));
         settlement.retry();
@@ -154,15 +163,17 @@ public class SettlementServiceImpl implements SettlementService {
         Trade trade = settlement.getTrade();
         trade.markReadyForSettlement();
         trade.setUpdatedAt(LocalDateTime.now());
-        settlementEventProducer.publishSettlementEvent(new SettlementEvent(
-                EventType.SETTLEMENT_RETRIED,
-                settlement.getId(),
-                trade.getId(),
-                settlement.getSettlementReference(),
-                trade.getCreatedBy().getUsername(),
-                null,
-                settlement.getRetryCount()
-        ));
+        SettlementEvent event = SettlementEvent.builder()
+                .eventType(EventType.SETTLEMENT_RETRIED)
+                .settlementId(settlement.getId())
+                .tradeId(trade.getId())
+                .settlementReference(settlement.getSettlementReference())
+                .username(trade.getCreatedBy().getUsername())
+                .reason(null)
+                .retryCount(settlement.getRetryCount())
+                .build();
+
+        outboxService.saveEvent(EventType.SETTLEMENT_RETRIED,settlement.getId(),event);
         return map(settlement);
 
     }
