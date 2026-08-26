@@ -1,5 +1,6 @@
 package com.example.capitalmarkets.tradesettlement.settlement;
 
+import java.time.Instant;
 import java.util.UUID;
 
 import com.example.capitalmarkets.tradesettlement.event.EventType;
@@ -57,6 +58,7 @@ public class SettlementServiceImpl implements SettlementService {
 
         Settlement saved = settlementRepository.save(settlement);
         SettlementEvent event = SettlementEvent.builder()
+                .eventId(UUID.randomUUID())
                 .eventType(EventType.SETTLEMENT_CREATED)
                 .settlementId(saved.getId())
                 .tradeId(trade.getId())
@@ -64,6 +66,7 @@ public class SettlementServiceImpl implements SettlementService {
                 .username(trade.getCreatedBy().getUsername())
                 .reason(null)
                 .retryCount(null)
+                .eventTime(Instant.now())
                 .build();
 
         outboxService.saveEvent(EventType.SETTLEMENT_CREATED,saved.getId(),event);
@@ -84,6 +87,7 @@ public class SettlementServiceImpl implements SettlementService {
         trade.setStatus(TradeStatus.SETTLING);
         trade.setUpdatedAt(LocalDateTime.now());
         SettlementEvent event = SettlementEvent.builder()
+                .eventId(UUID.randomUUID())
                 .eventType(EventType.SETTLEMENT_PROCESSING)
                 .settlementId(settlement.getId())
                 .tradeId(trade.getId())
@@ -91,6 +95,7 @@ public class SettlementServiceImpl implements SettlementService {
                 .username(trade.getCreatedBy().getUsername())
                 .reason(null)
                 .retryCount(null)
+                .eventTime(Instant.now())
                 .build();
 
         outboxService.saveEvent(EventType.SETTLEMENT_PROCESSING,settlement.getId(),event);
@@ -111,6 +116,7 @@ public class SettlementServiceImpl implements SettlementService {
         trade.setStatus(TradeStatus.SETTLED);
         trade.setUpdatedAt(LocalDateTime.now());
         SettlementEvent event = SettlementEvent.builder()
+                .eventId(UUID.randomUUID())
                 .eventType(EventType.SETTLEMENT_SETTLED)
                 .settlementId(settlement.getId())
                 .tradeId(trade.getId())
@@ -118,6 +124,7 @@ public class SettlementServiceImpl implements SettlementService {
                 .username(trade.getCreatedBy().getUsername())
                 .reason(null)
                 .retryCount(null)
+                .eventTime(Instant.now())
                 .build();
 
         outboxService.saveEvent(EventType.SETTLEMENT_SETTLED,settlement.getId(),event);
@@ -139,6 +146,7 @@ public class SettlementServiceImpl implements SettlementService {
         trade.setStatus(TradeStatus.FAILED);
         trade.setUpdatedAt(LocalDateTime.now());
         SettlementEvent event = SettlementEvent.builder()
+                .eventId(UUID.randomUUID())
                 .eventType(EventType.SETTLEMENT_FAILED)
                 .settlementId(settlement.getId())
                 .tradeId(trade.getId())
@@ -146,6 +154,7 @@ public class SettlementServiceImpl implements SettlementService {
                 .username(trade.getCreatedBy().getUsername())
                 .reason(reason)
                 .retryCount(null)
+                .eventTime(Instant.now())
                 .build();
 
         outboxService.saveEvent(EventType.SETTLEMENT_FAILED,settlement.getId(),event);
@@ -164,6 +173,7 @@ public class SettlementServiceImpl implements SettlementService {
         trade.markReadyForSettlement();
         trade.setUpdatedAt(LocalDateTime.now());
         SettlementEvent event = SettlementEvent.builder()
+                .eventId(UUID.randomUUID())
                 .eventType(EventType.SETTLEMENT_RETRIED)
                 .settlementId(settlement.getId())
                 .tradeId(trade.getId())
@@ -171,6 +181,7 @@ public class SettlementServiceImpl implements SettlementService {
                 .username(trade.getCreatedBy().getUsername())
                 .reason(null)
                 .retryCount(settlement.getRetryCount())
+                .eventTime(Instant.now())
                 .build();
 
         outboxService.saveEvent(EventType.SETTLEMENT_RETRIED,settlement.getId(),event);
