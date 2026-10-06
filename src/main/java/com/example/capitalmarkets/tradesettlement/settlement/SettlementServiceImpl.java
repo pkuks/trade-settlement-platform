@@ -3,10 +3,10 @@ package com.example.capitalmarkets.tradesettlement.settlement;
 import java.time.Instant;
 import java.util.UUID;
 
-import com.example.capitalmarkets.tradesettlement.event.EventType;
+import com.example.capitalmarkets.tradesettlement.messaging.event.EventType;
 import com.example.capitalmarkets.tradesettlement.common.exception.ResourceNotFoundException;
-import com.example.capitalmarkets.tradesettlement.event.SettlementEvent;
-import com.example.capitalmarkets.tradesettlement.kafka.SettlementEventProducer;
+import com.example.capitalmarkets.tradesettlement.messaging.event.SettlementEvent;
+import com.example.capitalmarkets.tradesettlement.messaging.kafka.SettlementEventProducer;
 import com.example.capitalmarkets.tradesettlement.trade.TradeRepository;
 import com.example.capitalmarkets.tradesettlement.trade.Trade;
 import com.example.capitalmarkets.tradesettlement.trade.TradeStatus;
@@ -14,7 +14,7 @@ import com.example.capitalmarkets.tradesettlement.common.exception.BusinessExcep
 import com.example.capitalmarkets.tradesettlement.common.util.ReferenceGenerator;
 import java.time.LocalDateTime;
 import com.example.capitalmarkets.tradesettlement.audit.AuditService;
-import com.example.capitalmarkets.tradesettlement.outbox.OutboxService;
+import com.example.capitalmarkets.tradesettlement.messaging.outbox.OutboxService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;

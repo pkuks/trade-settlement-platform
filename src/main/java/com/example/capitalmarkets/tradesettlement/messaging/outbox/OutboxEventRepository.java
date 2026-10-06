@@ -1,4 +1,4 @@
-package com.example.capitalmarkets.tradesettlement.outbox;
+package com.example.capitalmarkets.tradesettlement.messaging.outbox;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.UUID;

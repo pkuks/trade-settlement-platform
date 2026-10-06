@@ -1,10 +1,9 @@
-package com.example.capitalmarkets.tradesettlement.kafka;
+package com.example.capitalmarkets.tradesettlement.messaging.kafka;
 
-import com.example.capitalmarkets.tradesettlement.event.KafkaTopics;
-import com.example.capitalmarkets.tradesettlement.event.SettlementEvent;
-import com.example.capitalmarkets.tradesettlement.outbox.OutboxEvent;
-import com.example.capitalmarkets.tradesettlement.outbox.OutboxEventRepository;
-import com.example.capitalmarkets.tradesettlement.outbox.OutboxStatus;
+import com.example.capitalmarkets.tradesettlement.messaging.event.SettlementEvent;
+import com.example.capitalmarkets.tradesettlement.messaging.outbox.OutboxEvent;
+import com.example.capitalmarkets.tradesettlement.messaging.outbox.OutboxEventRepository;
+import com.example.capitalmarkets.tradesettlement.messaging.outbox.OutboxStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

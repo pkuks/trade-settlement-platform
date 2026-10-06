@@ -1,6 +1,6 @@
 package com.example.capitalmarkets.tradesettlement.audit;
 
-import com.example.capitalmarkets.tradesettlement.event.EventType;
+import com.example.capitalmarkets.tradesettlement.messaging.event.EventType;
 
 import java.util.UUID;
 import java.util.List;

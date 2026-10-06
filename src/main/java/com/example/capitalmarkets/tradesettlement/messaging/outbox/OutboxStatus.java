@@ -1,4 +1,4 @@
-package com.example.capitalmarkets.tradesettlement.outbox;
+package com.example.capitalmarkets.tradesettlement.messaging.outbox;
 
 public enum OutboxStatus {
     PENDING,

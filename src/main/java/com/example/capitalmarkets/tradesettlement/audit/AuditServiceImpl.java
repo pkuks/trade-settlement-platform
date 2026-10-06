@@ -3,7 +3,7 @@ package com.example.capitalmarkets.tradesettlement.audit;
 import java.util.UUID;
 import java.lang.Override;
 
-import com.example.capitalmarkets.tradesettlement.event.EventType;
+import com.example.capitalmarkets.tradesettlement.messaging.event.EventType;
 import org.springframework.stereotype.Service;
 import lombok.AllArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;

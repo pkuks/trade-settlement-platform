@@ -1,6 +1,6 @@
-package com.example.capitalmarkets.tradesettlement.kafka;
+package com.example.capitalmarkets.tradesettlement.messaging.kafka;
 
-import com.example.capitalmarkets.tradesettlement.event.*;
+import com.example.capitalmarkets.tradesettlement.messaging.event.SettlementEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.kafka.core.KafkaTemplate;
 import lombok.RequiredArgsConstructor;
@@ -25,3 +25,4 @@ public class SettlementEventProducer {
     }
 
 }
+

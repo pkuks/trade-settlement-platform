@@ -1,6 +1,6 @@
-package com.example.capitalmarkets.tradesettlement.outbox;
+package com.example.capitalmarkets.tradesettlement.messaging.outbox;
 
-import com.example.capitalmarkets.tradesettlement.event.EventType;
+import com.example.capitalmarkets.tradesettlement.messaging.event.EventType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.UUID;

@@ -1,4 +1,4 @@
-package com.example.capitalmarkets.tradesettlement.event;
+package com.example.capitalmarkets.tradesettlement.messaging.event;
 
 public enum EventType {
     TRADE_CREATED,

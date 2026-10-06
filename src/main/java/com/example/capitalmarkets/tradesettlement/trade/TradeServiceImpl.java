@@ -1,6 +1,6 @@
 package com.example.capitalmarkets.tradesettlement.trade;
 
-import com.example.capitalmarkets.tradesettlement.event.EventType;
+import com.example.capitalmarkets.tradesettlement.messaging.event.EventType;
 import com.example.capitalmarkets.tradesettlement.audit.AuditService;
 import com.example.capitalmarkets.tradesettlement.common.exception.*;
 import com.example.capitalmarkets.tradesettlement.user.User;
