@@ -43,6 +43,6 @@ public class OutboxEvent {
     private LocalDateTime publishedAt;
 
     @Column(nullable = false)
-    private int publishAttempts;
+    private int publishAttempts=0;
 
 }
