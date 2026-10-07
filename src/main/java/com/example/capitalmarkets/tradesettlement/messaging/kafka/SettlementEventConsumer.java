@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import com.example.capitalmarkets.tradesettlement.audit.AuditServiceImpl;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -28,6 +29,7 @@ public class SettlementEventConsumer {
     )
 
 
+    @Transactional
     public void consume(SettlementEvent event){
 
         if (repository.existsById(event.eventId())){

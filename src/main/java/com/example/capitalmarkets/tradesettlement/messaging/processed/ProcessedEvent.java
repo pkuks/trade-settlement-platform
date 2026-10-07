@@ -19,6 +19,7 @@ public class ProcessedEvent {
     private UUID eventId;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 100)
     private EventType eventType;
 
     @Column(nullable = false)
