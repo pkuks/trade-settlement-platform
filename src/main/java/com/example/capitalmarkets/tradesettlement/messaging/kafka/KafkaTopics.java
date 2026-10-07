@@ -5,4 +5,6 @@ public final class KafkaTopics {
     private KafkaTopics(){}
 
     public static final String SETTLEMENT_EVENTS = "settlement-events";
+
+    public static final String SETTLEMENT_EVENTS_DLT = "settlement-events-dlt";
 }
