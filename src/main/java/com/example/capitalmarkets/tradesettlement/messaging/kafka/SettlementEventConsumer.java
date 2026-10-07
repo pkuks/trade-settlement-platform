@@ -41,7 +41,10 @@ public class SettlementEventConsumer {
             case EventType.SETTLEMENT_CREATED ->  "Settlement created";
             case EventType.SETTLEMENT_PROCESSING -> "Settlement processing";
             case EventType.SETTLEMENT_SETTLED ->  "Settlement settled";
-            case EventType.SETTLEMENT_FAILED -> "Settlement failed due to " + event.reason();
+            case EventType.SETTLEMENT_FAILED -> {
+//                throw new RuntimeException("DLQ Test"); // to test DLQ.
+                yield "Settlement failed due to " + event.reason();
+            }
             case EventType.SETTLEMENT_RETRIED -> "Settlement retry - Retry count " + event.retryCount();
             default -> throw new IllegalStateException("Unexpected value: " + event.eventType());
         };
